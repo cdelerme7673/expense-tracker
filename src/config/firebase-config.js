@@ -6,7 +6,7 @@ import { initializeApp } from "firebase/app";
 // Your web app's Firebase configuration
 // (These should be environment vars in prod -CD)
 const firebaseConfig = {
-  apiKey: "AIzaSyCd2hpQIr6WlAKHPfFvtj5-9zaLq2Qyfz0",
+  //   apiKey: "AIzaSyCd2hpQIr6WlAKHPfFvtj5-9zaLq2Qyfz0",
   authDomain: "expense-tracker-88f88.firebaseapp.com",
   projectId: "expense-tracker-88f88",
   storageBucket: "expense-tracker-88f88.firebasestorage.app",
