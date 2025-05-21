@@ -7,7 +7,7 @@ import { getFirestore } from "firebase/firestore";
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Initialize Firebase
-const app = initializeApp({
+const firebaseApp = initializeApp({
   apiKey: process.env.REACT_APP_FIRBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIRBASE_AUTH_DOMAIN,
   projectId: process.env.REACT_APP_FIRBASE_PROJECT_ID,
@@ -15,9 +15,9 @@ const app = initializeApp({
   messagingSenderId: process.env.REACT_APP_FIRBASE_MESSAGING_SENDER_ID,
   appId: process.env.REACT_APP_FIRBASE_APP_ID,
 });
-export const auth = getAuth(app);
-export const provider = new GoogleAuthProvider();
-export const db = getFirestore(app);
+export const auth = getAuth(firebaseApp);
+export const googleProvider = new GoogleAuthProvider();
+export const firestoreDB = getFirestore(firebaseApp);
 
 // Deploy to Firebase Hosting...
 // firebase login

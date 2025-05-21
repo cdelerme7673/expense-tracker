@@ -1,8 +1,12 @@
-import { useAddTransaction } from "../../hooks/useAddTransaction";
 import { useRef } from "react";
+import { useAddTransaction } from "../../hooks/useAddTransaction";
+import { useGetTransactions } from "../../hooks/useGetTransactions";
+import "./styles.css";
 
 export const ExpenseTracker = () => {
+  const collectionName = "transactions";
   const { addTransaction } = useAddTransaction();
+  const { transactions } = useGetTransactions(collectionName);
 
   const formRefs = {
     description: useRef(),
@@ -12,13 +16,6 @@ export const ExpenseTracker = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-
-    // console.log("addTransaction()", {
-    //   description: formRefs.description.current.value,
-    //   isExpense: formRefs.isExpense.current.checked,
-    //   transactionAmount: formRefs.transactionAmount.current.value,
-    // });
-
     addTransaction({
       description: formRefs.description.current.value,
       transactionType: formRefs.isExpense.current.checked
@@ -78,6 +75,23 @@ export const ExpenseTracker = () => {
       </div>
       <div className="transactions">
         <h3>Transactions</h3>
+        <ul>
+          {transactions.map((trans) => {
+            return (
+              <li key={trans.docId}>
+                ${trans.transactionAmount} -{" "}
+                <label
+                  style={{
+                    color:
+                      trans.transactionType === "expense" ? "red" : "green",
+                  }}
+                >
+                  {trans.transactionType}
+                </label>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </>
   );

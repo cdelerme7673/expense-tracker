@@ -1,19 +1,18 @@
 import "./styles.css";
-import { auth, provider } from "../../config/firebase-config";
+import { auth, googleProvider } from "../../config/firebase-config";
 import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
 export const Auth = () => {
   const navigate = useNavigate();
   const signInWithGoogle = async () => {
-    const results = await signInWithPopup(auth, provider);
+    const results = await signInWithPopup(auth, googleProvider);
     const authInfo = {
       userId: results.user?.uid || "",
       name: results.user?.displayName || "",
       profilePhoto: results.user?.photoURL || "",
       isAuth: true,
     };
-    console.log("signInWithGoogle()", authInfo);
     localStorage.setItem("auth", JSON.stringify(authInfo));
     navigate("expense-tracker");
   };
@@ -30,5 +29,3 @@ export const Auth = () => {
     </div>
   );
 };
-
-// export default Auth;
