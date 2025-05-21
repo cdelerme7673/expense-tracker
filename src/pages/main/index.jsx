@@ -5,7 +5,7 @@ import "./styles.css";
 
 export const ExpenseTracker = () => {
   const collectionName = "transactions";
-  const { addTransaction } = useAddTransaction();
+  const { addTransaction } = useAddTransaction(collectionName);
   const { transactions } = useGetTransactions(collectionName);
 
   const formRefs = {
