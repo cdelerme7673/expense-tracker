@@ -1,17 +1,32 @@
 import { useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
 import { useAddTransaction } from "../../hooks/useAddTransaction";
 import { useGetTransactions } from "../../hooks/useGetTransactions";
+import { useGetUserInfo } from "../../hooks/useGetUserInfo";
+import { auth } from "../../config/firebase-config";
 import "./styles.css";
 
 export const ExpenseTracker = () => {
+  const navigate = useNavigate();
   const collectionName = "transactions";
   const { addTransaction } = useAddTransaction(collectionName);
-  const { transactions } = useGetTransactions(collectionName);
+  const { transactions, transactionTotals } =
+    useGetTransactions(collectionName);
+  const { name, profilePhoto } = useGetUserInfo();
+
+  const { balance, expenses, income } = transactionTotals;
 
   const formRefs = {
     description: useRef(),
     transactionAmount: useRef(),
     isExpense: useRef(),
+  };
+
+  const clearFormRefs = () => {
+    const { description, transactionAmount } = formRefs;
+    description.current.value = "";
+    transactionAmount.current.value = 0;
   };
 
   const onSubmit = (e) => {
@@ -23,27 +38,38 @@ export const ExpenseTracker = () => {
         : "income",
       transactionAmount: formRefs.transactionAmount.current.value,
     });
+    clearFormRefs();
+  };
+
+  const signUserOut = async () => {
+    try {
+      await signOut(auth);
+      localStorage.clear();
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
     <>
       <div className="expense-tracker">
         <div className="container">
-          <h1>ExpenseTracker</h1>
+          <h1>{name}'s ExpenseTracker</h1>
           <div className="balance">
             <h3>Your Balance</h3>
-            <h2>$0.00</h2>
+            <h2>{balance < 0 ? `-$${balance * -1}` : `$${balance}`}</h2>
           </div>
 
           <div className="summary">
             <div className="income">
               <h4>Income</h4>
-              <p>$0.00</p>
+              <p>${income}</p>
             </div>
 
             <div className="expenses">
               <h4>Expenses</h4>
-              <p>$0.00</p>
+              <p>${expenses}</p>
             </div>
           </div>
 
@@ -72,6 +98,20 @@ export const ExpenseTracker = () => {
             <button type="Submit">Add Transaction</button>
           </form>
         </div>
+
+        {profilePhoto && (
+          <div className="profile">
+            <img className="profile-photo" src={profilePhoto} />
+            <button
+              className="sign-out-button"
+              onClick={() => {
+                signUserOut();
+              }}
+            >
+              Sign Out
+            </button>
+          </div>
+        )}
       </div>
       <div className="transactions">
         <h3>Transactions</h3>

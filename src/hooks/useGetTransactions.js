@@ -11,11 +11,11 @@ import { useGetUserInfo } from "./useGetUserInfo";
 
 export const useGetTransactions = (collectionName) => {
   const [transactions, setTransactions] = useState([]);
-  //   const [transactionTotals, setTransactionTotals] = useState({
-  //     balance: 0.0,
-  //     income: 0.0,
-  //     expenses: 0.0,
-  //   });
+  const [transactionTotals, setTransactionTotals] = useState({
+    balance: 0.0,
+    income: 0.0,
+    expenses: 0.0,
+  });
 
   const transactionCollectionRef = collection(firestoreDB, collectionName);
   const { userId } = useGetUserInfo();
@@ -30,8 +30,8 @@ export const useGetTransactions = (collectionName) => {
       );
       unsubscribe = onSnapshot(queryTransactions, (snapshot) => {
         let documents = [];
-        // let totalIncome = 0;
-        // let totalExpenses = 0;
+        let totalIncome = 0;
+        let totalExpenses = 0;
 
         snapshot.forEach((doc) => {
           const data = doc.data();
@@ -39,23 +39,17 @@ export const useGetTransactions = (collectionName) => {
 
           documents.push({ ...data, docId });
 
-          //   if (data.transactionType === "expense") {
-          //     totalExpenses += Number(data.transactionAmount);
-          //   } else {
-          //     totalIncome += Number(data.transactionAmount);
-          //   }
-
-          //   console.log(totalExpenses, totalIncome);
+          data.transactionType === "expense"
+            ? (totalExpenses += Number(data.transactionAmount))
+            : (totalIncome += Number(data.transactionAmount));
         });
 
         setTransactions(documents);
-
-        // let balance = totalIncome - totalExpenses;
-        // setTransactionTotals({
-        //   balance,
-        //   expenses: totalExpenses,
-        //   income: totalIncome,
-        // });
+        setTransactionTotals({
+          balance: totalIncome - totalExpenses,
+          expenses: totalExpenses,
+          income: totalIncome,
+        });
       });
     } catch (err) {
       console.error(err);
@@ -68,5 +62,5 @@ export const useGetTransactions = (collectionName) => {
     getTransactions();
   }, []);
 
-  return { transactions };
+  return { transactions, transactionTotals };
 };
