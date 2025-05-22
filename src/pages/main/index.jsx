@@ -1,19 +1,22 @@
 import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
+import { auth } from "../../config/firebase-config";
+import { useGetUserInfo } from "../../hooks/useGetUserInfo";
 import { useAddTransaction } from "../../hooks/useAddTransaction";
 import { useGetTransactions } from "../../hooks/useGetTransactions";
-import { useGetUserInfo } from "../../hooks/useGetUserInfo";
-import { auth } from "../../config/firebase-config";
+
 import "./styles.css";
 
 export const ExpenseTracker = () => {
+  const { name, profilePhoto, isAuth } = useGetUserInfo();
+  const { addTransaction } = useAddTransaction(
+    process.env.REACT_APP_FIRBASE_COLLECTION_NAME
+  );
+  const { transactions, transactionTotals } = useGetTransactions(
+    process.env.REACT_APP_FIRBASE_COLLECTION_NAME
+  );
   const navigate = useNavigate();
-  const collectionName = "transactions";
-  const { addTransaction } = useAddTransaction(collectionName);
-  const { transactions, transactionTotals } =
-    useGetTransactions(collectionName);
-  const { name, profilePhoto } = useGetUserInfo();
 
   const { balance, expenses, income } = transactionTotals;
 
@@ -50,6 +53,8 @@ export const ExpenseTracker = () => {
       console.error(err);
     }
   };
+
+  if (!isAuth) return <Navigate to="/" />;
 
   return (
     <>
@@ -113,6 +118,7 @@ export const ExpenseTracker = () => {
           </div>
         )}
       </div>
+
       <div className="transactions">
         <h3>Transactions</h3>
         <ul>
